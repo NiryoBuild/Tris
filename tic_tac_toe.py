@@ -72,9 +72,9 @@ class GameController(TwoPlayersGame):
         
     # Check if the game is over
     def is_over(self):
-        if  (self.possible_moves() == []): return True, "Partita finita\nAbbiamo pareggiato! Bella partita"
+        if  (self.possible_moves() == []): return True, "Partita finita\nAbbiamo pareggiato! Bella partita!"
         if self.loss_condition(): 
-            if self.player.name == 'AI': return True, "Partita finita\nComplimenti hai vinto"
+            if self.player.name == 'AI': return True, "Partita finita\nComplimenti hai vinto!"
             return True, "Partita finita\n Ho vinto!"
         return False, ""
 

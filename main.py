@@ -58,6 +58,7 @@ obj_pose_workspace_destra = PoseObject(-0.001, -0.191, 0.359, 0.688, 1.49, -1.01
 obj_pose_workspace_dritto = PoseObject(0.158, -0.004, 0.354, 0.677, 1.475, 0.544)
 partita_finita_1 = PoseObject(0.109, 0.162, 0.038, -0.012, -0.027, 0.819)
 partita_finita_2 = PoseObject(0.133, -0.148, 0.041, 0.011, -0.076, -0.939)
+posa_vincitore = PoseObject() # implementare
 
 robot.move_pose(obj_pose_workspace_dritto)
 robot.close_gripper(speed=100)
@@ -118,6 +119,13 @@ def main():
 					#della funzione play cambia il giocatore quindi si intende quello opposto
 					# a chi ha iniziato
 					print(vincitore)
+
+					sleep(3)
+
+					if "Ho vinto" in vincitore:
+						robot.move_pose(posa_vincitore)
+
+					sleep(3)
 					robot.move_pose(partita_finita_1)
 					robot.move_pose(partita_finita_2)
 					break
@@ -285,22 +293,28 @@ def muovi_robot(x_rel, y_rel):
 	#print(f"Coordinate: {x_rel}-{y_rel}")
 
 	robot.move_pose(obj_pose_workspace_destra)
+	sleep(1)
 	x_rel_dx, y_rel_dx, angolo = processing_image_workspace_destra()
 	#manca il movimento per girare la pinza di angolo
 	robot.open_gripper(speed=100)
 	sleep(2)
 	pos_robot = robot.get_target_pose_from_rel("workspace_destra", HEIGHT_OFFSET, x_rel_dx, y_rel_dx, angolo*np.pi/180)
 	robot.move_pose(pos_robot)
+	sleep(1)
 	robot.close_gripper(speed=100)
 	sleep(2)
 	robot.move_pose(obj_pose_workspace_destra)
+	sleep(1)
 	# POSA IL CUBETTO NELLA CELLA DEL WORKSPACE, APRE LA PINZA E TORNA NELLA POSA DI OSSERVAZIONE #
 	robot.move_pose(obj_pose_workspace_dritto)
+	sleep(1)
 	pos_robot = robot.get_target_pose_from_rel("workspace_dritto", HEIGHT_OFFSET, x_rel, y_rel, 0)
 	robot.move_pose(pos_robot)
+	sleep(1)
 	robot.open_gripper(speed=100)
 	sleep(2)
 	robot.move_pose(obj_pose_workspace_dritto)
+	sleep(1)
 	robot.close_gripper(speed=100)
 	# ------------------------------------------------------------------------------------------- #
 
