@@ -33,8 +33,9 @@ from copy import deepcopy
 
 # |..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..| #
 " COSTANTI e VARIABILI GLOBALI "
-COLORE_ROBOT = 0
-COLORE_GIOCATORE = 1
+# 0 verde, 1 arancione
+colore_robot = 0
+colore_giocatore = 1
 AREA_MINIMA_FIGURA = 1000
 INIZIO_UMANO = 1
 INIZIO_ROBOT = 2
@@ -68,7 +69,9 @@ robot.close_gripper(speed=100)
 
 def main():
 	global matrice
+	global colore_robot
 
+	colore_robot = scegli_colore()
 	g_iniziale = chi_inizia()
 	prima_volta = True
 	
@@ -88,7 +91,7 @@ def main():
 				mb = mossa_robot-1
 				x = mb%3
 				y = (mb-mb%3)//3
-				matrice[y][x] = (mossa_robot, COLORE_ROBOT)
+				matrice[y][x] = (mossa_robot, colore_robot)
 				print(f"mossa robot: {matrice}")
 				muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h)
 		else:
@@ -107,7 +110,7 @@ def main():
 					mb = mossa_robot-1
 					x = mb%3
 					y = (mb-mb%3)//3
-					matrice[y][x] = (mossa_robot, COLORE_ROBOT)
+					matrice[y][x] = (mossa_robot, colore_robot)
 					print(f"mossa robot: {matrice}")
 					muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h)
 				# ---------------------------------------------------------------- #
@@ -142,8 +145,12 @@ def chi_inizia():
 		elif opzione.lower() == "umano": return INIZIO_UMANO
 		print("Opzione non valida!\nInizia il robot o l'umano? (robot/umano): ")
 
-	
-	
+def scegli_colore():
+	while True:
+		opzione = input("Vuoi i cubetti verdi o arancioni? (verde/arancione): ")
+		if opzione.lower() == "verde": return 1
+		elif opzione.lower() == "arancione": return 0
+		opzione = input("Vuoi i cubetti verdi o arancioni? (verde/arancione): ")
 	
 
 def save_image():
@@ -223,7 +230,7 @@ def processing_image_workspace_destra():
 
 	# CONTROLLO QUAL'È IL COLORE DEI CUBETTI DEL ROBOT #
 	boundaries_robot = boundaries[1]
-	if COLORE_ROBOT == boundaries[0][0]: boundaries_robot = boundaries[0]
+	if colore_robot == boundaries[0][0]: boundaries_robot = boundaries[0]
 	# ------------------------------------------------ #
 
 	# FILTRO PER COLORE #
