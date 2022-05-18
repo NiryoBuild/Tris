@@ -43,13 +43,21 @@ FINE_GIOCO = "Partita finita"
 PIN_PULSANTE = '2A'
 
 HEIGHT_OFFSET = 0.002
+MIN_GRANDEZZA_FACCIA = 10000
 
 dir_path = str(Path(__file__).parent.resolve())
 
 #il minimo e il massimo del colore VERDE e ARANCIONE in formato HSV
 #boundaries = [ (0, [59, 158, 58], [103, 255, 255]), (1, [3, 220, 122], [179,255,255])]
-boundaries = [ (0, [32, 108, 22], [179, 255, 255]), (1, [3, 220, 122], [179,255,255])]
+boundaries = [ (0, [32, 109, 21], [109, 255, 119]), (1, [3, 220, 122], [179,255,255])]
 matrice = [[None for _ in range(3)] for _ in range(3)]
+
+# Load the cascade
+face_cascade = cv2.CascadeClassifier(f'{dir_path}/faceDetector/haarcascade_frontalface_default.xml')
+# Read the input image
+font = cv2.FONT_HERSHEY_SIMPLEX
+fontScale = 2
+fontColor = (0,0,255)
 
 #variabili globali per l'oggetto Niryo
 robot_ip_address = "10.10.10.10"
@@ -62,7 +70,7 @@ obj_pose_workspace_destra = PoseObject(-0.001, -0.191, 0.359, 0.688, 1.49, -1.01
 obj_pose_workspace_dritto = PoseObject(0.158, -0.004, 0.354, 0.677, 1.475, 0.544)
 partita_finita_1 = PoseObject(0.109, 0.162, 0.038, -0.012, -0.027, 0.819)
 partita_finita_2 = PoseObject(0.133, -0.148, 0.041, 0.011, -0.076, -0.939)
-posa_vincitore = PoseObject(0.137, -0.021, 0.286, 0.037, -0.554, -0.199) 
+posa_foto = PoseObject(0.146, -0.009, 0.209, 0.074, -0.105, -0.099) 
 
 robot.move_pose(obj_pose_workspace_dritto)
 robot.close_gripper(speed=100)
@@ -96,11 +104,11 @@ def main():
 					x = mb%3
 					y = (mb-mb%3)//3
 					matrice[y][x] = (mossa_robot, colore_robot)
-					print(f"mossa robot: {matrice}")
+					#print(f"mossa robot: {matrice}")
 					muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h)
 			else: print("Sembra ci siano già dei blocchetti!\nTi ricordo che 'Soddisfa più una sconfitta pulita dove hai dato tutto, \npiuttosto che una vittoria ottenuta barando.'\n\t- Jury Chechi\nRimetti i cubetti correttamente")
 		else:
-			print(f"nuova matrice robot: {nuova_matrice}")
+			#print(f"nuova matrice robot: {nuova_matrice}")
 			if n_diff == 0: print("Devi ancora fare la tua mossa!")
 			elif n_diff > 1:
 				print("Sembra che tu abbia spostato i blocchetti!\nTi ricordo che 'Soddisfa più una sconfitta pulita dove hai dato tutto, \npiuttosto che una vittoria ottenuta barando.'\n\t- Jury Chechi\nRimetti i cubetti correttamente")
@@ -116,7 +124,7 @@ def main():
 					x = mb%3
 					y = (mb-mb%3)//3
 					matrice[y][x] = (mossa_robot, colore_robot)
-					print(f"mossa robot: {matrice}")
+					#print(f"mossa robot: {matrice}")
 					muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h)
 				# ---------------------------------------------------------------- #
 
@@ -129,7 +137,8 @@ def main():
 					print(vincitore)
 
 					if "Ho vinto" in vincitore:
-						robot.move_pose(posa_vincitore)
+						robot.move_pose(posa_foto)
+						mostra_risultato()
 						sleep(3)
 						
 					robot.move_pose(partita_finita_1)
@@ -158,9 +167,9 @@ def scegli_colore():
 		opzione = input("Vuoi i cubetti verdi o arancioni? (verde/arancione): ")
 	
 
-def save_image():
+def save_image(nome_immagine='immagine.jpeg'):
 	immagine_scattata = robot.get_img_compressed()
-	with open(f"{dir_path}/immagine.jpeg", "wb") as img: img.write(immagine_scattata)
+	with open(f"{dir_path}/{nome_immagine}", "wb") as img: img.write(immagine_scattata)
 
 def processing_image_workspace_dritto():
 	matrice_foto = [[None for _ in range(3)] for _ in range(3)]
@@ -260,32 +269,33 @@ def processing_image_workspace_destra():
 	# ------------------ #
 
 	# TROVARE I CENTRI DEL PRIMO CONTORNO #
-	if cnts == []: 
-		print("Errore non ci sono cubetti")
-		return "ERRORE! Non riesco a trovare dei cubetti" , "", ""
+	if cnts == []: return "", "", "", "ERRORE! Non riesco a trovare dei cubetti"
 
-	# verifichiamo l'area della figura
-	area = cv2.contourArea(cnts[0])
-	#trovo l'angolo
-	angle = cv2.minAreaRect(cnts[0])[2]
 
-	if area > AREA_MINIMA_FIGURA:
-		M = cv2.moments(cnts[0])
-		cX = int(M["m10"] / M["m00"])
-		cY = int(M["m01"] / M["m00"])
-		#print(f"Contorni dell'immagine: X→ {cX}, Y→ {cY}")
-		# draw the contour and center of the shape on the image
-		cv2.drawContours(output, [cnts[0]], -1, (0, 255, 0), 2)
-		cv2.circle(output, (cX, cY), 7, (255, 255, 255), -1)
-		cv2.putText(output, "center", (cX - 20, cY - 20),
-		cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-		cv2.imshow("Image", output)
-		cv2.waitKey(0)
-	else: print(area)
+	for cnt in cnts:
+		# verifichiamo l'area della figura
+		area = cv2.contourArea(cnt)
+		#trovo l'angolo
+		angle = cv2.minAreaRect(cnt)[2]
+		if area > AREA_MINIMA_FIGURA:
+			M = cv2.moments(cnt)
+			cX = int(M["m10"] / M["m00"])
+			cY = int(M["m01"] / M["m00"])
+			#print(f"Contorni dell'immagine: X→ {cX}, Y→ {cY}")
+			# draw the contour and center of the shape on the image
+			"""cv2.drawContours(output, [cnt], -1, (0, 255, 0), 2)
+			cv2.circle(output, (cX, cY), 7, (255, 255, 255), -1)
+			cv2.putText(output, "center", (cX - 20, cY - 20),
+			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+			cv2.imshow("Image", output)
+			cv2.waitKey(0)"""
+			# conversione da pixel a percentuale workspace
+			return (float(cX) / w), (float(cY) / h), angle, "OK"
+		
+	return "", "", "", "ERRORE! Non riesco a trovare dei cubetti"
 	# ---------------------------- #
 	
-	# conversione da pixel a percentuale workspace
-	return (float(cX) / w), (float(cY) / h), angle
+	
 		
 
 def check_differences(matrice_precedente, matrice_attuale):
@@ -307,7 +317,10 @@ def muovi_robot(x_rel, y_rel):
 
 	robot.move_pose(obj_pose_workspace_destra)
 	sleep(2)
-	x_rel_dx, y_rel_dx, angolo = processing_image_workspace_destra()
+	x_rel_dx, y_rel_dx, angolo, errore = processing_image_workspace_destra()
+	if "ERRORE" in errore: 
+		print(errore)
+		exit()
 	#manca il movimento per girare la pinza di angolo
 	robot.open_gripper(speed=100)
 	sleep(1)
@@ -331,6 +344,27 @@ def muovi_robot(x_rel, y_rel):
 	robot.close_gripper(speed=100)
 	sleep(2)
 	# ------------------------------------------------------------------------------------------- #
+
+def mostra_risultato():
+	save_image('foto_faccia.jpeg')
+	img = cv2.imread(f"{dir_path}/foto_faccia.jpeg")
+	# Convert into grayscale
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	# Detect faces
+	faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+	# Draw rectangle around the faces
+	if len(faces) == 0:
+		img_x, img_y , _ = img.shape
+		cv2.putText(img, 'Dove ti sei nascosto??', (img.x/3, img_y), font, fontScale, fontColor, 3,cv2.LINE_AA) 
+	else:
+		for (x, y, w, h) in faces:
+			if w*h > MIN_GRANDEZZA_FACCIA:
+				#print(w*h)
+				cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
+				cv2.putText(img, 'Perdente', (x,y), font, fontScale, fontColor, 3,cv2.LINE_AA)
+		# Display the output
+		cv2.imshow('img', img)
+		cv2.waitKey(3000)
 
 # |..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..| #
 

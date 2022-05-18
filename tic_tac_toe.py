@@ -24,8 +24,8 @@ class GameController(TwoPlayersGame):
             self.history.append((deepcopy(self), move))
             self.make_move(move)
             
-            print( "\nMossa plays %s :"%(str(move)) )
-            self.show()
+            #print( "\nMossa plays %s :"%(str(move)) )
+            #self.show()
                 
             self.switch_player()
 
@@ -47,8 +47,8 @@ class GameController(TwoPlayersGame):
             self.history.append((deepcopy(self), move))
             self.make_move(move)
             
-            print( "\nMossa plays %s :"%(str(move)) )
-            self.show()
+            #print( "\nMossa plays %s :"%(str(move)) )
+            #self.show()
                 
             self.switch_player()
 
