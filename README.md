@@ -3,6 +3,8 @@
 
 In questo progetto abbiamo realizzato un codice che permettesse al Robot Niryo One di giocare a tris. 
 
+_Per questo progetto consigliamo di utilizzare la versione di `pyniryo` `1.1.1`_.
+
 ### Hardware
 //foto della base del Niryo
 Per questo progetto abbiamo realizzato una piastra di alluminio su cui abbiamo fissato il Niryo e su cui abbiamo incollato due _workspace_, in modo da evitare di dover effettuare la calibrazione ogni volta.
