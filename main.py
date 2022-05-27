@@ -82,6 +82,8 @@ def main():
 	global matrice
 	global colore_robot
 
+	robot.open_gripper(speed=100)
+	
 	colore_robot = scegli_colore()
 	g_iniziale = chi_inizia()
 	prima_volta = True
@@ -157,29 +159,36 @@ def chi_inizia():
 		opzione = input("Inizia il robot o l'umano? (robot/umano): ")
 		if opzione.lower() == "robot": return INIZIO_ROBOT
 		elif opzione.lower() == "umano": return INIZIO_UMANO
-		print("Opzione non valida!\nInizia il robot o l'umano? (robot/umano): ")
+		print("Opzione non valida!\n")
 
 def scegli_colore():
 	while True:
 		opzione = input("Vuoi i cubetti verdi o arancioni? (verde/arancione): ")
 		if opzione.lower() == "verde": return 1
 		elif opzione.lower() == "arancione": return 0
-		opzione = input("Vuoi i cubetti verdi o arancioni? (verde/arancione): ")
-	
+		print("Opzione non valida!\n")
 
 def save_image(nome_immagine='immagine.jpeg'):
 	immagine_scattata = robot.get_img_compressed()
 	with open(f"{dir_path}/{nome_immagine}", "wb") as img: img.write(immagine_scattata)
 
+def verifica_correttezza_immagine():
+	save_image()
+	image_read = cv2.imread(f"{dir_path}/immagine.jpeg")
+	image_read = extract_img_workspace(image_read)
+	try:
+		h,w,c = image_read.shape
+		return image_read,h,w,c
+	except:
+		print("Non è stato possibile estrarre il workspace dall'immagine")
+		sleep(2)
+		return verifica_correttezza_immagine()
+
+
 def processing_image_workspace_dritto():
 	matrice_foto = [[None for _ in range(3)] for _ in range(3)]
 
-	save_image()
-	#image_read = cv2.imread(f"{dir_path}/../immagini_tris/immagine_29.jpeg")
-	image_read = cv2.imread(f"{dir_path}/immagine.jpeg")
-	image_read = extract_img_workspace(image_read)
-	
-	h,w,_ = image_read.shape
+	image_read,h,w,_ = verifica_correttezza_immagine()
 	
 	"""cv2.imshow("immagine_estratta", image_read)
 	cv2.waitKey(0)"""
@@ -232,12 +241,7 @@ def processing_image_workspace_dritto():
 
 def processing_image_workspace_destra():
 
-	save_image()
-	#image_read = cv2.imread(f"{dir_path}/../immagini_tris/immagine_13.jpeg")
-	image_read = cv2.imread(f"{dir_path}/immagine.jpeg")
-	image_read = extract_img_workspace(image_read)
-	
-	h,w,_ = image_read.shape
+	image_read,h,w,_ = verifica_correttezza_immagine()
 	
 	"""cv2.imshow("immagine_estratta", image_read)
 	cv2.waitKey(0)"""
@@ -355,28 +359,18 @@ def mostra_risultato():
 	# Draw rectangle around the faces
 	if len(faces) == 0:
 		img_x, img_y , _ = img.shape
-		cv2.putText(img, 'Dove ti sei nascosto??', (img.x/3, img_y), font, fontScale, fontColor, 3,cv2.LINE_AA) 
+		cv2.putText(img, 'Dove ti sei nascosto??', (int(img_x/3), int(img_y)), font, fontScale, fontColor, 3,cv2.LINE_AA) 
 	else:
 		for (x, y, w, h) in faces:
 			if w*h > MIN_GRANDEZZA_FACCIA:
 				#print(w*h)
 				cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
 				cv2.putText(img, 'Perdente', (x,y), font, fontScale, fontColor, 3,cv2.LINE_AA)
-		# Display the output
-		cv2.imshow('img', img)
-		cv2.waitKey(3000)
+	# Display the output
+	cv2.imshow('img', img)
+	cv2.waitKey(3000)
 
 # |..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..| #
-
-
-"""
-PER VISUALIZZAR UN IMMAGINE:
-cv2.imshow("Image", output)
-cv2.waitKey(0)
-"""
-
-
-
 
 if __name__ == "__main__":
 	main()
