@@ -227,6 +227,7 @@ def processing_image_workspace_dritto():
 		for c in cnts:
 			# verifichiamo l'area della figura
 			area = cv2.contourArea(c)
+			angle = cv2.minAreaRect(c)[2]
 
 			if area > AREA_MINIMA_FIGURA:
 				M = cv2.moments(c)
@@ -241,7 +242,7 @@ def processing_image_workspace_dritto():
 				cv2.imshow("Image", output)
 				cv2.waitKey(0)"""
 
-				matrice_foto[int(cY/(h/3))][int(cX/(w/3))] = (int(cY/(h/3))*3 + int(cX/(w/3)) + 1, id_colore)
+				matrice_foto[int(cY/(h/3))][int(cX/(w/3))] = (int(cY/(h/3))*3 + int(cX/(w/3)) + 1, id_colore, angle)
 		# ---------------------------- #
 	return matrice_foto, w, h
 
@@ -341,17 +342,17 @@ def check_baro(matrice_precedente, matrice_attuale, w, h):
 						else: muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, "workspace_centro", obj_pose_workspace_centro, isHumanWorkspace=True)
 					else:
 						if x2[1] == colore_robot: 
-							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h)
+							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2])
 							muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, "workspace_centro", obj_pose_workspace_centro, isHumanWorkspace=True)
 						else: 
-							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, "workspace_centro", obj_pose_workspace_centro)
+							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2], "workspace_centro", obj_pose_workspace_centro)
 							muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, isHumanWorkspace=False)
 				else:
 					mb = x2[0]-1
 					x = mb%3
 					y = (mb-mb%3)//3
-					if x2[1] == colore_robot: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h)
-					else: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, "workspace_centro", obj_pose_workspace_centro)
+					if x2[1] == colore_robot: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2])
+					else: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2], "workspace_centro", obj_pose_workspace_centro)
 				
 
 def muovi_robot(x_rel, y_rel, workspace="workspace_destra", obs_pose=obj_pose_workspace_destra, isHumanWorkspace=False):
@@ -388,11 +389,11 @@ def muovi_robot(x_rel, y_rel, workspace="workspace_destra", obs_pose=obj_pose_wo
 	sleep(2)
 	# ------------------------------------------------------------------------------------------- #
 
-def muovi_robot_contrario(x_rel, y_rel, workspace="workspace_destra", obs_pose=obj_pose_workspace_destra):
+def muovi_robot_contrario(x_rel, y_rel, angolo, workspace="workspace_destra", obs_pose=obj_pose_workspace_destra):
 	robot.move_pose(obj_pose_workspace_dritto)
 	robot.open_gripper(speed=100)
 	sleep(1)
-	pos_robot = robot.get_target_pose_from_rel("workspace_dritto", HEIGHT_OFFSET, x_rel, y_rel, 0)
+	pos_robot = robot.get_target_pose_from_rel("workspace_dritto", HEIGHT_OFFSET, x_rel, y_rel, angolo*np.pi/180)
 	robot.move_pose(pos_robot)
 	robot.close_gripper(speed=100)
 	sleep(2)
