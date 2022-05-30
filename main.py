@@ -36,11 +36,12 @@ from copy import deepcopy
 # 0 verde, 1 arancione
 colore_robot = 0
 colore_giocatore = 1
-AREA_MINIMA_FIGURA = 1000
+AREA_MINIMA_FIGURA = 1500
 INIZIO_UMANO = 1
 INIZIO_ROBOT = 2
 FINE_GIOCO = "Partita finita"
 PIN_PULSANTE = '2A'
+PIN_BUZZER = '1A'
 
 HEIGHT_OFFSET = 0.002
 MIN_GRANDEZZA_FACCIA = 10000
@@ -49,7 +50,7 @@ dir_path = str(Path(__file__).parent.resolve())
 
 #il minimo e il massimo del colore VERDE e ARANCIONE in formato HSV
 #boundaries = [ (0, [59, 158, 58], [103, 255, 255]), (1, [3, 220, 122], [179,255,255])]
-boundaries = [ (0, [32, 109, 21], [109, 255, 119]), (1, [3, 220, 122], [179,255,255])]
+boundaries = [ (0, [55, 107, 26], [104, 255, 105]), (1, [0, 199, 31], [66, 255, 255])]
 matrice = [[None for _ in range(3)] for _ in range(3)]
 
 # Load the cascade
@@ -65,9 +66,12 @@ robot = NiryoRobot(robot_ip_address)
 
 robot.update_tool()
 robot.set_pin_mode(PIN_PULSANTE,PinMode(1)) #0: OUPUT, 1:INPUT
+robot.set_pin_mode(PIN_BUZZER,PinMode(0)) #0: OUPUT, 1:INPUT
+robot.digital_write(PIN_BUZZER, PinState.LOW)
 
-obj_pose_workspace_destra = PoseObject(-0.001, -0.191, 0.359, 0.688, 1.49, -1.011)
-obj_pose_workspace_dritto = PoseObject(0.158, -0.004, 0.354, 0.677, 1.475, 0.544)
+obj_pose_workspace_destra = PoseObject(-0.001, -0.171, 0.344, 0.457, 1.495, -1.219)
+obj_pose_workspace_dritto = PoseObject(0.177, 0.036, 0.329, -2.991, 1.523, -3.103)
+obj_pose_workspace_centro = PoseObject(0.145, -0.199, 0.324, 0.042, 1.474, -0.125)
 partita_finita_1 = PoseObject(0.109, 0.162, 0.038, -0.012, -0.027, 0.819)
 partita_finita_2 = PoseObject(0.133, -0.148, 0.041, 0.011, -0.076, -0.939)
 posa_foto = PoseObject(0.146, -0.009, 0.209, 0.074, -0.105, -0.099) 
@@ -96,7 +100,7 @@ def main():
 		nuova_matrice, w, h = processing_image_workspace_dritto()
 		n_diff, differenze = check_differences(matrice, nuova_matrice)
 
-		if prima_volta:
+		if prima_volta and g_iniziale == INIZIO_ROBOT:
 			if n_diff == 0:
 				prima_volta = False
 				mossa_robot = gioco_tris.inizio_mossa_robot()
@@ -152,6 +156,9 @@ def main():
 				# ---------------------------------- #
 		print("Premere il pulsante dopo aver effettuato la mossa!")
 		while robot.digital_read(PIN_PULSANTE) != PinState.LOW: pass  #LOW:False, HIGH: True
+		robot.digital_write(PIN_BUZZER, PinState.HIGH)
+		sleep(0.5)
+		robot.digital_write(PIN_BUZZER, PinState.LOW)
 		
 
 def chi_inizia():
@@ -222,6 +229,7 @@ def processing_image_workspace_dritto():
 			area = cv2.contourArea(c)
 
 			if area > AREA_MINIMA_FIGURA:
+				
 				M = cv2.moments(c)
 				cX = int(M["m10"] / M["m00"])
 				cY = int(M["m01"] / M["m00"])
@@ -305,6 +313,8 @@ def processing_image_workspace_destra():
 def check_differences(matrice_precedente, matrice_attuale):
 	n_differenze = 0
 	elementi_differenti = []
+	print(f"Matrice vecchia: {matrice_precedente}")
+	print(f"Matrice nuova: {matrice_attuale}")
 
 	for y1, y2 in zip(matrice_precedente, matrice_attuale):
 		for x1, x2 in zip(y1, y2):
@@ -312,7 +322,7 @@ def check_differences(matrice_precedente, matrice_attuale):
 				n_differenze += 1
 				elementi_differenti.append(x2)
 				if x1 != None: n_differenze +=100
-
+	print(f"n differenze: {n_differenze}")
 	return n_differenze, elementi_differenti
 
 def muovi_robot(x_rel, y_rel):
@@ -359,7 +369,7 @@ def mostra_risultato():
 	# Draw rectangle around the faces
 	if len(faces) == 0:
 		img_x, img_y , _ = img.shape
-		cv2.putText(img, 'Dove ti sei nascosto??', (int(img_x/3), int(img_y)), font, fontScale, fontColor, 3,cv2.LINE_AA) 
+		cv2.putText(img, 'Dove ti sei nascosto??', (int(img_x/5), int(img_y/2)), font, fontScale, fontColor, 3,cv2.LINE_AA) 
 	else:
 		for (x, y, w, h) in faces:
 			if w*h > MIN_GRANDEZZA_FACCIA:

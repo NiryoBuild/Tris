@@ -36,11 +36,12 @@ from copy import deepcopy
 # 0 verde, 1 arancione
 colore_robot = 0
 colore_giocatore = 1
-AREA_MINIMA_FIGURA = 1000
+AREA_MINIMA_FIGURA = 1500
 INIZIO_UMANO = 1
 INIZIO_ROBOT = 2
 FINE_GIOCO = "Partita finita"
 PIN_PULSANTE = '2A'
+PIN_BUZZER = '1A'
 
 HEIGHT_OFFSET = 0.002
 MIN_GRANDEZZA_FACCIA = 10000
@@ -48,7 +49,7 @@ MIN_GRANDEZZA_FACCIA = 10000
 dir_path = str(Path(__file__).parent.resolve())
 
 #il minimo e il massimo del colore VERDE e ARANCIONE in formato HSV
-boundaries = [ (0, [32, 109, 21], [109, 255, 119]), (1, [3, 220, 122], [179,255,255])]
+boundaries = [ (0, [55, 107, 26], [104, 255, 105]), (1, [0, 199, 31], [66, 255, 255])]
 matrice = [[None for _ in range(3)] for _ in range(3)]
 
 # Load the cascade
@@ -64,6 +65,9 @@ robot = NiryoRobot(robot_ip_address)
 
 robot.update_tool()
 robot.set_pin_mode(PIN_PULSANTE,PinMode(1)) #0: OUPUT, 1:INPUT
+
+robot.set_pin_mode(PIN_BUZZER,PinMode(0)) #0: OUPUT, 1:INPUT
+robot.digital_write(PIN_BUZZER, PinState.LOW)
 
 obj_pose_workspace_destra = PoseObject(-0.001, -0.171, 0.344, 0.457, 1.495, -1.219)
 obj_pose_workspace_dritto = PoseObject(0.177, 0.036, 0.329, -2.991, 1.523, -3.103)
@@ -88,7 +92,7 @@ def main():
 	g_iniziale = chi_inizia()
 	prima_volta = True
 	
-	algorithm = Negamax(3) # 7 (imbattibile)
+	algorithm = Negamax(7) # 7 (imbattibile)
 	gioco_tris = GameController([Human_Player(), AI_Player(algorithm)], g_iniziale)
 	
 
@@ -96,7 +100,7 @@ def main():
 		nuova_matrice, w, h = processing_image_workspace_dritto()
 		n_diff, differenze = check_differences(matrice, nuova_matrice)
 
-		if prima_volta:
+		if prima_volta and g_iniziale == INIZIO_ROBOT:
 			if n_diff == 0:
 				prima_volta = False
 				mossa_robot = gioco_tris.inizio_mossa_robot()
@@ -156,6 +160,9 @@ def main():
 				# ---------------------------------- #
 		print("Premere il pulsante dopo aver effettuato la mossa!")
 		while robot.digital_read(PIN_PULSANTE) != PinState.LOW: pass  #LOW:False, HIGH: True
+		robot.digital_write(PIN_BUZZER, PinState.HIGH)
+		sleep(0.5)
+		robot.digital_write(PIN_BUZZER, PinState.LOW)
 		
 
 def chi_inizia():
@@ -314,14 +321,24 @@ def processing_image_workspace_blocchi(isHumanWorkspace=False):
 	# ---------------------------- #
 	
 	
-		
-
+	
 def check_differences(matrice_precedente, matrice_attuale):
 	n_differenze = 0
 	elementi_differenti = []
 
+	print(f"Matrice vecchia: {matrice_precedente}")
+	print(f"Matrice nuova: {matrice_attuale}")
+
 	for y1, y2 in zip(matrice_precedente, matrice_attuale):
 		for x1, x2 in zip(y1, y2):
+			
+			#parte aggiunta adesso
+
+			if x1 != None:
+				x1 = x1[0:2]
+			if x2 != None:
+				x2 = x2[0:2]
+				
 			if x1 != x2:
 				n_differenze += 1
 				elementi_differenti.append(x2)
@@ -332,6 +349,12 @@ def check_differences(matrice_precedente, matrice_attuale):
 def check_baro(matrice_precedente, matrice_attuale, w, h):
 	for y1, y2 in zip(matrice_precedente, matrice_attuale):
 		for x1, x2 in zip(y1, y2):
+			if x2 != None: 
+				angolo_x2 = x2[2]
+				x2 = x2[0:2]
+
+			if x1 != None and len(x1) == 3: x1 = x1[0:2]
+			print(f"x1: {x1} - x2: {x2}")
 			if x1 != x2:
 				if x1 != None:
 					mb = x1[0]-1
@@ -342,17 +365,17 @@ def check_baro(matrice_precedente, matrice_attuale, w, h):
 						else: muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, "workspace_centro", obj_pose_workspace_centro, isHumanWorkspace=True)
 					else:
 						if x2[1] == colore_robot: 
-							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2])
+							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, angolo_x2)
 							muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, "workspace_centro", obj_pose_workspace_centro, isHumanWorkspace=True)
 						else: 
-							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2], "workspace_centro", obj_pose_workspace_centro)
+							muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, angolo_x2, "workspace_centro", obj_pose_workspace_centro)
 							muovi_robot(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, isHumanWorkspace=False)
 				else:
 					mb = x2[0]-1
 					x = mb%3
 					y = (mb-mb%3)//3
-					if x2[1] == colore_robot: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2])
-					else: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, x1[2], "workspace_centro", obj_pose_workspace_centro)
+					if x2[1] == colore_robot: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, angolo_x2)
+					else: muovi_robot_contrario(float((x*w/3)+w/6)/w, float((y*h/3)+h/6)/h, angolo_x2, "workspace_centro", obj_pose_workspace_centro)
 				
 
 def muovi_robot(x_rel, y_rel, workspace="workspace_destra", obs_pose=obj_pose_workspace_destra, isHumanWorkspace=False):
@@ -499,7 +522,7 @@ def mostra_risultato():
 	# Draw rectangle around the faces
 	if len(faces) == 0:
 		img_x, img_y , _ = img.shape
-		cv2.putText(img, 'Dove ti sei nascosto??', (int(img_x/3), int(img_y)), font, fontScale, fontColor, 3,cv2.LINE_AA) 
+		cv2.putText(img, 'Dove ti sei nascosto??', (int(img_x/5), int(img_y/2)), font, fontScale, fontColor, 3,cv2.LINE_AA) 
 	else:
 		for (x, y, w, h) in faces:
 			if w*h > MIN_GRANDEZZA_FACCIA:
