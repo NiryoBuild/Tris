@@ -10,7 +10,8 @@
 
 """
 
-""" VERSIONE CON LA CORREZIONE NEL CASO L'UTENTE BARI"""
+""" VERSIONE CON LA CORREZIONE NEL CASO L'UTENTE BARI E I MICROBIT PER LA COMUNICAZIONE DEL PULSANTE
+PREMUTO"""
 
 # |..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..|..| #
 " LIBRERIE "
@@ -41,7 +42,6 @@ INIZIO_UMANO = 1
 INIZIO_ROBOT = 2
 FINE_GIOCO = "Partita finita"
 PIN_PULSANTE = '2A'
-PIN_BUZZER = '1A'
 
 HEIGHT_OFFSET = 0.002
 MIN_GRANDEZZA_FACCIA = 10000
@@ -65,9 +65,6 @@ robot = NiryoRobot(robot_ip_address)
 
 robot.update_tool()
 robot.set_pin_mode(PIN_PULSANTE,PinMode(1)) #0: OUPUT, 1:INPUT
-
-robot.set_pin_mode(PIN_BUZZER,PinMode(0)) #0: OUPUT, 1:INPUT
-robot.digital_write(PIN_BUZZER, PinState.LOW)
 
 obj_pose_workspace_destra = PoseObject(-0.001, -0.171, 0.344, 0.457, 1.495, -1.219)
 obj_pose_workspace_dritto = PoseObject(0.177, 0.036, 0.329, -2.991, 1.523, -3.103)
@@ -159,11 +156,7 @@ def main():
 					break
 				# ---------------------------------- #
 		print("Premere il pulsante dopo aver effettuato la mossa!")
-
-		while robot.digital_read(PIN_PULSANTE) != PinState.LOW: pass 
-		robot.digital_write(PIN_BUZZER, PinState.HIGH)
-		sleep(0.5)
-		robot.digital_write(PIN_BUZZER, PinState.LOW)
+		while robot.digital_read(PIN_PULSANTE) != PinState.HIGH: pass  #LOW:False, HIGH: True
 		
 
 def chi_inizia():
