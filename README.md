@@ -21,6 +21,8 @@ Abbiamo inoltre montato un pulsante che si deve premere per _"passare il turno a
 Lo schema elettrico è il seguente:
 //Schema elettrico
 
+---
+
 ### Funzionamento
 
 Il funzionamento del codice è il seguente:
