@@ -45,6 +45,18 @@ Di seguito è presente un video dimostrativo:
 
 ---
 
+### Versioni
+Di questo programma sono presenti numerose versioni del `main` principale:
+
+| Nome del file | Descrizione     | 
+| :-------- | :------- |
+| `main.py` | È il main principale dove è presente il controllo nel caso si stia barando |
+| `main_r.py` | È il main che controlla che l'utente non bari e in caso contrario rimette i blocchetti per ritornare allo stato precedente alla "mano scorretta" |
+| `main_v.py` | È il main principale dove è presente il controllo nel caso si stia barando. A differenza delle altre versioni è presente la `vacuum pump` anziché la `pinza`|
+| `main_r_m.py` | È analogo al `main_r`, ma anziché il pulsante collegato elettricamente sono presenti due `microbit` che comunicano via radio. |
+
+---
+
 ### Autori
 - [@GabrieleFerrero](https://github.com/GabrieleFerrero)
 - [@VittoriaDutto](https://github.com/vikydutto)
