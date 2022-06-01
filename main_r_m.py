@@ -49,7 +49,7 @@ MIN_GRANDEZZA_FACCIA = 10000
 dir_path = str(Path(__file__).parent.resolve())
 
 #il minimo e il massimo del colore VERDE e ARANCIONE in formato HSV
-boundaries = [ (0, [55, 107, 26], [104, 255, 105]), (1, [0, 199, 31], [66, 255, 255])]
+boundaries = [ (0, [38, 43, 31], [113, 255, 255]), (1, [5, 191, 78], [179, 255, 255])]
 matrice = [[None for _ in range(3)] for _ in range(3)]
 
 # Load the cascade
@@ -89,7 +89,7 @@ def main():
 	g_iniziale = chi_inizia()
 	prima_volta = True
 	
-	algorithm = Negamax(7) # 7 (imbattibile)
+	algorithm = Negamax(2) # 7 (imbattibile)
 	gioco_tris = GameController([Human_Player(), AI_Player(algorithm)], g_iniziale)
 	
 
@@ -335,6 +335,7 @@ def check_differences(matrice_precedente, matrice_attuale):
 				
 			if x1 != x2:
 				n_differenze += 1
+				if x2[1] == colore_robot: n_differenze +=100
 				elementi_differenti.append(x2)
 				if x1 != None: n_differenze +=100
 
@@ -516,7 +517,7 @@ def mostra_risultato():
 	# Draw rectangle around the faces
 	if len(faces) == 0:
 		img_x, img_y , _ = img.shape
-		cv2.putText(img, 'Dove ti sei nascosto??', (int(img_x/5), int(img_y/2)), font, fontScale, fontColor, 3,cv2.LINE_AA) 
+		cv2.putText(img, 'Dove ti sei nascosto??', (int(img_x/7), int(img_y/2)), font, fontScale-1, fontColor, 3,cv2.LINE_AA) 
 	else:
 		for (x, y, w, h) in faces:
 			if w*h > MIN_GRANDEZZA_FACCIA:

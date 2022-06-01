@@ -320,6 +320,7 @@ def check_differences(matrice_precedente, matrice_attuale):
 		for x1, x2 in zip(y1, y2):
 			if x1 != x2:
 				n_differenze += 1
+				if x2[1] == colore_robot: n_differenze +=100
 				elementi_differenti.append(x2)
 				if x1 != None: n_differenze +=100
 	print(f"n differenze: {n_differenze}")
