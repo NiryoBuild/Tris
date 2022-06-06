@@ -14,7 +14,7 @@ Il secondo workspace (nel codice chiamato _workspace_destra_) è il luogo dove s
 
 I pezzi con cui si gioca al nostro tris sono dei cubetti di colore verde o arancione (colori settati in HSV all'interno del codice main.py, nella variabile _boundaries_). È possibile, nonostante i colori siano i medesimi, che la telecamera non veda i blocchetti, poiché ci può essere una luce differente.
 Consigliamo quindi, prima di avviare il codice principale, di eseguire _color_calibration.py_ (presente nella cartella colorCalibration) in modo da determinare il range minimo e massimo che volete sia rilevato per un determinato colore.
-//foto di blocchetti e della pagina di color calibration
+<img src="./immagini/color_calibration.png" width="50%">
 
 Abbiamo inoltre montato un pulsante che si deve premere per _"passare il turno al robot"_ durante il gioco.
 //foto
