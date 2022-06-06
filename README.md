@@ -6,7 +6,9 @@ In questo progetto abbiamo realizzato un codice che permettesse al Robot Niryo O
 _Per questo progetto consigliamo di utilizzare la versione di `pyniryo` `1.1.1`_.
 
 ### Hardware
-//foto della base del Niryo
+
+<img src="./immagini/base_1.png" width="50%">
+
 Per questo progetto abbiamo realizzato una piastra di alluminio su cui abbiamo fissato il Niryo e su cui abbiamo incollato due _workspace_, in modo da evitare di dover effettuare la calibrazione ogni volta.
 
 Il primo workspace (nel codice chiamato _workspace_dritto_) è il campo da gioco che è stato diviso in 9 parti.
