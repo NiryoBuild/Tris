@@ -32,6 +32,15 @@ Nel caso si utilizzasse la versione del main `m` allora anziché un semplice pul
 - il secondo ovvero il `receiver` che sarà collegato al Niryo e sarà in ascolto del segnale
 Di seguito sono riportate alcune foto e lo schema elettrico. Inoltre nella cartella `codice_microbit` sono presenti il codice in python e la versione già eseguibile.
 
+**RECEIVER**
+
+<img src="./immagini/microbit_receiver_foto.jpeg" width="20%">  <img src="./immagini/microbit_receiver_foto_2.jpeg" width="20%">
+
+
+**SENDER**
+
+<img src="./immagini/pulsante_microbit.jpeg" width="20%">  <img src="./immagini/pulsante_microbit_collegamenti_2.jpeg" width="20%"> <img src="./immagini/pulsante_microbit_collegamenti_3.jpeg" width="20%">
+
 **SCHEMA ELETTTRICO**
 
 <img src="./immagini/receiver_microbit.png" width="20%"> <img src="./immagini/sender_microbit.png" width="19%">
