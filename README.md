@@ -9,10 +9,11 @@ _Per questo progetto consigliamo di utilizzare la versione di `pyniryo` `1.1.1`_
 
 <img src="./immagini/base_1.jpeg" width="50%">
 
-Per questo progetto abbiamo realizzato una piastra di alluminio su cui abbiamo fissato il Niryo e su cui abbiamo incollato due _workspace_, in modo da evitare di dover effettuare la calibrazione ogni volta.
+Per questo progetto abbiamo realizzato una piastra di alluminio su cui abbiamo fissato il Niryo e su cui abbiamo incollato tre _workspace_, in modo da evitare di dover effettuare la calibrazione ogni volta.
 
-Il primo workspace (nel codice chiamato _workspace_dritto_) è il campo da gioco che è stato diviso in 9 parti.
-Il secondo workspace (nel codice chiamato _workspace_destra_) è il luogo dove sono presenti i blocchetti del Niryo.
+- Il primo workspace (nel codice chiamato _workspace_dritto_) è il campo da gioco che è stato diviso in 9 parti.
+- Il secondo workspace (nel codice chiamato _workspace_destra_) è il luogo dove sono presenti i blocchetti del Niryo.
+- Il terzo workspace (nel codice chiamato _workspace_centro_) è il luogo dove sono presenti i blocchetti del giocatore umano.
 
 I pezzi con cui si gioca al nostro tris sono dei cubetti di colore verde o arancione (colori settati in HSV all'interno del codice main.py, nella variabile _boundaries_). È possibile, nonostante i colori siano i medesimi, che la telecamera non veda i blocchetti, poiché ci può essere una luce differente.
 Consigliamo quindi, prima di avviare il codice principale, di eseguire _color_calibration.py_ (presente nella cartella colorCalibration) in modo da determinare il range minimo e massimo che volete sia rilevato per un determinato colore.
