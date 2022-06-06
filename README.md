@@ -20,7 +20,9 @@ Consigliamo quindi, prima di avviare il codice principale, di eseguire _color_ca
 <img src="./immagini/color_calibration.png" width="50%">
 
 Abbiamo inoltre montato un pulsante che si deve premere per _"passare il turno al robot"_ durante il gioco.
-//foto
+
+<img src="./immagini/pulsante_fronte.jpeg" width="20%"> <img src="./immagini/pulsante_retro.jpeg" width="20%">
+
 Lo schema elettrico è il seguente:
 
 <img src="./immagini/schema_elettrico.png" width="20%">
