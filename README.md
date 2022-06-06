@@ -7,7 +7,7 @@ _Per questo progetto consigliamo di utilizzare la versione di `pyniryo` `1.1.1`_
 
 ### Hardware
 
-<img src="./immagini/base_1.png" width="50%">
+<img src="./immagini/base_1.jpeg" width="50%">
 
 Per questo progetto abbiamo realizzato una piastra di alluminio su cui abbiamo fissato il Niryo e su cui abbiamo incollato due _workspace_, in modo da evitare di dover effettuare la calibrazione ogni volta.
 
