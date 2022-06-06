@@ -28,8 +28,9 @@ Nel caso si utilizzasse la versione del main `m` allora anziché un semplice pul
 Di seguito sono riportate alcune foto e lo schema elettrico. Inoltre nella cartella `codice_microbit` sono presenti il codice in python e la versione già eseguibile.
 
 **SCHEMA ELETTTRICO**
-<img src="./immagini/recevier_microbit.png" width="20%">
-<img src="./immagini/sender_microbit.png" width="20%">
+
+<img src="./immagini/recevier_microbit_2.png" width="20%">
+<img src="./immagini/sender_microbit_2.png" width="30%">
 ---
 
 ### Funzionamento
