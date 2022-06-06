@@ -39,7 +39,7 @@ Di seguito sono riportate alcune foto e lo schema elettrico. Inoltre nella carte
 
 **SENDER**
 
-<img src="./immagini/pulsante_microbit_2.jpeg" width="40%">  <img src="./immagini/pulsante_microbit_collegamenti_2.jpeg" width="20%"> <img src="./immagini/pulsante_microbit_collegamenti_3.jpeg" width="20%">
+<img src="./immagini/pulsante_microbit_2.jpeg" width="37%">  <img src="./immagini/pulsante_microbit_collegamenti_2.jpeg" width="20%"> <img src="./immagini/pulsante_microbit_collegamenti_3.jpeg" width="20%">
 
 **SCHEMA ELETTTRICO**
 
