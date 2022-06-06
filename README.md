@@ -43,7 +43,7 @@ Di seguito sono riportate alcune foto e lo schema elettrico. Inoltre nella carte
 
 **SCHEMA ELETTTRICO**
 
-<img src="./immagini/receiver_microbit.png" width="20%"> <img src="./immagini/sender_microbit.png" width="19%">
+<img src="./immagini/receiver_microbit.png" width="40%"> <img src="./immagini/sender_microbit.png" width="38%">
 ---
 
 ### Funzionamento
