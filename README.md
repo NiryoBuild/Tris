@@ -22,6 +22,14 @@ Lo schema elettrico è il seguente:
 
 <img src="./immagini/schema_elettrico.png" width="20%">
 
+Nel caso si utilizzasse la versione del main `m` allora anziché un semplice pulsante saranno presenti due microbit: 
+- il primo ovvero il `sender` che una volta premuto il pulsante invia un segnale all'altro microbit
+- il secondo ovvero il `receiver` che sarà collegato al Niryo e sarà in ascolto del segnale
+Di seguito sono riportate alcune foto e lo schema elettrico. Inoltre nella cartella `codice_microbit` sono presenti il codice in python e la versione già eseguibile.
+
+**SCHEMA ELETTTRICO**
+<img src="./immagini/recevier_microbit.png" width="20%">
+<img src="./immagini/sender_microbit.png" width="20%">
 ---
 
 ### Funzionamento
