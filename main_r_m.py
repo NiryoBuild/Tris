@@ -49,7 +49,7 @@ MIN_GRANDEZZA_FACCIA = 10000
 dir_path = str(Path(__file__).parent.resolve())
 
 #il minimo e il massimo del colore VERDE e ARANCIONE in formato HSV
-boundaries = [ (0, [38, 43, 31], [113, 255, 255]), (1, [5, 191, 78], [179, 255, 255])]
+boundaries = [ (0, [54, 70, 28], [151, 255, 255]), (1, [0, 193, 57], [69, 255, 255])]
 matrice = [[None for _ in range(3)] for _ in range(3)]
 
 # Load the cascade
@@ -89,7 +89,7 @@ def main():
 	g_iniziale = chi_inizia()
 	prima_volta = True
 	
-	algorithm = Negamax(2) # 7 (imbattibile)
+	algorithm = Negamax(7) # 7 (imbattibile)
 	gioco_tris = GameController([Human_Player(), AI_Player(algorithm)], g_iniziale)
 	
 
@@ -335,9 +335,10 @@ def check_differences(matrice_precedente, matrice_attuale):
 				
 			if x1 != x2:
 				n_differenze += 1
-				if x2[1] == colore_robot: n_differenze +=100
-				elementi_differenti.append(x2)
 				if x1 != None: n_differenze +=100
+				elif x2[1] == colore_robot: n_differenze +=100
+				elementi_differenti.append(x2)
+				#if x1 != None: n_differenze +=100
 
 	return n_differenze, elementi_differenti
 
@@ -349,7 +350,7 @@ def check_baro(matrice_precedente, matrice_attuale, w, h):
 				x2 = x2[0:2]
 
 			if x1 != None and len(x1) == 3: x1 = x1[0:2]
-			print(f"x1: {x1} - x2: {x2}")
+			#print(f"x1: {x1} - x2: {x2}")
 			if x1 != x2:
 				if x1 != None:
 					mb = x1[0]-1
@@ -523,7 +524,7 @@ def mostra_risultato():
 			if w*h > MIN_GRANDEZZA_FACCIA:
 				#print(w*h)
 				cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
-				cv2.putText(img, 'Perdente', (x,y), font, fontScale-1, fontColor, 3,cv2.LINE_AA)
+				cv2.putText(img, 'Perdente', (x,y), font, fontScale, fontColor, 3,cv2.LINE_AA)
 	# Display the output
 	cv2.imshow('img', img)
 	cv2.waitKey(3000)
@@ -532,3 +533,4 @@ def mostra_risultato():
 
 if __name__ == "__main__":
 	main()
+
